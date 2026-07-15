@@ -13,7 +13,7 @@
 
 .packageName <- 'sindyr'
 
-sindy = function(xs, u = NULL, dx = NULL,dt = 1, Theta = NULL, lambda = .05, # main parameters
+sindyc = function(xs, u = NULL, dx = NULL,dt = 1, Theta = NULL, lambda = .05, # main parameters
                  B.expected = NULL, verbose = FALSE, fit.its = 10,
                  plot.eq.graph = FALSE) {
 
@@ -25,8 +25,16 @@ sindy = function(xs, u = NULL, dx = NULL,dt = 1, Theta = NULL, lambda = .05, # m
     dx = as.matrix(dx) # store as matrix
   }
 
+  # Create a new matrix that includes the forcing factor if one is provided
+  if (is.null(u)) {
+    xs_plus_forcing <- xs
+  } else {
+    validate_u(xs, u)
+    xs_plus_forcing <- cbind(xs, u)
+  }
+
   if (is.null(Theta)) {
-    Theta = features(xs, polyorder = 3) # if Theta not specified, make it (assume order 3)
+    Theta = features(xs_plus_forcing, polyorder = 3) # if Theta not specified, make it (assume order 3)
   }
 
   B = mldivide(Theta, dx) # now, the party starts; let's do left division
@@ -37,7 +45,7 @@ sindy = function(xs, u = NULL, dx = NULL,dt = 1, Theta = NULL, lambda = .05, # m
       for (ind in 1:ncol(dx)) { # go through our system variables
         B_temp = B[, ind]
         pos_inds = which(abs(B_temp) >= lambda) # which are positive indices?
-        if (length(pos_inds)>0) { # now, let's refit B with just those remaining indices
+        if (length(pos_inds) > 0) { # now, let's refit B with just those remaining indices
           B[pos_inds, ind] = mldivide(Theta[, pos_inds], dx[, ind])
         }
       }
@@ -103,4 +111,10 @@ sindy = function(xs, u = NULL, dx = NULL,dt = 1, Theta = NULL, lambda = .05, # m
   }
 
   return(sindy.obj)
+}
+
+validate_u = function(xs, u) {
+  if (!is.null(u) && nrow(xs) != nrow(u)) {
+    stop("Your data and u must have the same number of rows")
+  }
 }

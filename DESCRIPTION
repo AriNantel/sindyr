@@ -15,5 +15,5 @@ Description:
 Depends: R (>= 3.4), arrangements, matrixStats, igraph, graphics, grDevices
 Imports: pracma
 License: GPL (>= 2)
-Collate: 'windowed_sindy.R' 'sindy.R' 'features.R' 'finite_differences.R' 'finite_difference.R' 'lorenzattractor.R' 'sindyc'
+Collate: 'windowed_sindy.R' 'sindy.R' 'features.R' 'finite_differences.R' 'finite_difference.R' 'lorenzattractor.R' 'sindyc.R'
 NeedsCompilation: no
